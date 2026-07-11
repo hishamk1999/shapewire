@@ -1,7 +1,22 @@
-import { describe, expect, it } from "vitest";
-import { defaults, mapEach, merge, normalize, pipe, rename } from "./index";
+import { describe, expect, expectTypeOf, it } from "vitest";
+import { defaults, mapEach, merge, normalize, pipe, rename } from "./index.js";
 
 describe("transform pipeline", () => {
+  it("infers output fields across transforms", () => {
+    const transform = pipe(
+      rename({ user_id: "id" }),
+      defaults({ role: "viewer" as const }),
+      normalize({ balance: "number" }),
+      merge({ active: true as const }),
+    );
+    const result = transform({ user_id: 1, balance: "4.5" });
+
+    expectTypeOf(result.id).toEqualTypeOf<number>();
+    expectTypeOf(result.role).toEqualTypeOf<"viewer">();
+    expectTypeOf(result.balance).toEqualTypeOf<number | null>();
+    expectTypeOf(result.active).toEqualTypeOf<true>();
+  });
+
   it("composes a UI-ready user transform", () => {
     const transform = pipe(
       rename({ user_id: "id", created_at: "createdAt" }),

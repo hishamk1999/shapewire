@@ -1,4 +1,4 @@
-import type { AnyRecord, Simplify } from "./types";
+import type { AnyRecord, Simplify } from "./types.js";
 
 type Merged<Left extends AnyRecord, Right extends AnyRecord> = Simplify<Omit<Left, keyof Right> & Right>;
 

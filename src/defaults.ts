@@ -1,4 +1,4 @@
-import type { AnyRecord, Simplify } from "./types";
+import type { AnyRecord, Simplify } from "./types.js";
 
 type WithDefaults<Input extends AnyRecord, Defaults extends AnyRecord> = Simplify<
   Omit<Input, keyof Defaults> & {

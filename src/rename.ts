@@ -1,4 +1,4 @@
-import type { AnyRecord, Simplify, Transform } from "./types";
+import type { AnyRecord, Simplify } from "./types.js";
 
 type RenameMap<Input extends AnyRecord> = Partial<Record<keyof Input, PropertyKey>>;
 

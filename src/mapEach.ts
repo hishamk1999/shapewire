@@ -1,4 +1,4 @@
-import type { Transform } from "./types";
+import type { Transform } from "./types.js";
 
 /** Applies a transform to each item. Nullish input becomes an empty array. */
 export function mapEach<Input, Output>(transform: Transform<Input, Output>) {

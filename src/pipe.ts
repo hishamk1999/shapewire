@@ -1,4 +1,4 @@
-import type { Transform } from "./types";
+import type { Transform } from "./types.js";
 
 export function pipe<A, B>(ab: Transform<A, B>): Transform<A, B>;
 export function pipe<A, B, C>(ab: Transform<A, B>, bc: Transform<B, C>): Transform<A, C>;

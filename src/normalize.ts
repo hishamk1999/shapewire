@@ -1,4 +1,4 @@
-import type { AnyRecord, Simplify } from "./types";
+import type { AnyRecord, Simplify } from "./types.js";
 
 export type Normalizer<Value = unknown, Output = unknown> = (value: Value, key: PropertyKey) => Output;
 export type BuiltInNormalizer = "isoDate" | "number" | "boolean" | `currency:${string}`;
@@ -50,11 +50,14 @@ export function normalize<const Specs extends Readonly<Record<PropertyKey, Norma
     for (const key of Reflect.ownKeys(specs)) {
       const spec = specs[key];
       if (!spec) continue;
-      const normalizer = typeof spec === "function"
-        ? spec
-        : spec.startsWith("currency:")
-          ? currency(spec.slice("currency:".length))
-          : builtIns[spec];
+      let normalizer: Normalizer;
+      if (typeof spec === "function") {
+        normalizer = spec;
+      } else if (spec.startsWith("currency:")) {
+        normalizer = currency(spec.slice("currency:".length));
+      } else {
+        normalizer = builtIns[spec as keyof typeof builtIns];
+      }
       result[key] = normalizer(result[key], key);
     }
     return result as Normalized<Input, Specs>;

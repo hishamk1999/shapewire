@@ -4,18 +4,18 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-first-3178c6)
 ![Modules](https://img.shields.io/badge/modules-native%20ESM-f7df1e)
-![License](https://img.shields.io/badge/license-ISC-22c55e)
+![License](https://img.shields.io/badge/license-MIT-3178c6)
 ![Status](https://img.shields.io/badge/status-pre--release-f97316)
 
 API responses rarely match the shape a frontend actually needs. Keys use the wrong naming convention, primitives arrive as inconsistent strings, optional values are missing, and related data comes from separate endpoints. ShapeWire turns that repeated boundary code into small, declarative transforms that compose from left to right.
 
 ```ts
-import {defaults, normalize, pipe, rename} from 'shapewire';
+import { defaults, normalize, pipe, rename } from "shapewire";
 
 const toUser = pipe(
-  rename({user_id: 'id', full_name: 'name', created_at: 'createdAt'}),
-  defaults({role: 'viewer', verified: false}),
-  normalize({createdAt: 'isoDate', balance: 'number', verified: 'boolean'}),
+  rename({ user_id: "id", full_name: "name", created_at: "createdAt" }),
+  defaults({ role: "viewer", verified: false }),
+  normalize({ createdAt: "isoDate", balance: "number", verified: "boolean" }),
 );
 ```
 
@@ -65,29 +65,29 @@ Suppose an endpoint returns snake-case keys and inconsistent primitive values:
 ```ts
 const apiUser = {
   user_id: 7,
-  full_name: 'Ada Lovelace',
-  created_at: '2025-01-02',
-  balance: '12.50',
-  verified: 'yes',
+  full_name: "Ada Lovelace",
+  created_at: "2025-01-02",
+  balance: "12.50",
+  verified: "yes",
 };
 ```
 
 Define a reusable boundary transform:
 
 ```ts
-import {defaults, normalize, pipe, rename} from 'shapewire';
+import { defaults, normalize, pipe, rename } from "shapewire";
 
 const toUser = pipe(
   rename({
-    user_id: 'id',
-    full_name: 'name',
-    created_at: 'createdAt',
+    user_id: "id",
+    full_name: "name",
+    created_at: "createdAt",
   }),
-  defaults({role: 'viewer' as const, verified: false}),
+  defaults({ role: "viewer" as const, verified: false }),
   normalize({
-    createdAt: 'isoDate',
-    balance: 'number',
-    verified: 'boolean',
+    createdAt: "isoDate",
+    balance: "number",
+    verified: "boolean",
   }),
 );
 
@@ -113,19 +113,19 @@ Read the [documentation overview](apps/docs/docs/intro.md), [quick-start guide](
 
 ## API at a glance
 
-| Export | Purpose |
-| --- | --- |
-| `pipe` | Compose synchronous transforms from left to right. |
-| `rename` | Rename selected own enumerable keys. |
-| `defaults` | Fill fields whose values are `null` or `undefined`. |
-| `normalize` | Apply built-in or custom field normalizers. |
-| `merge` | Shallow-merge an object or zero-argument source factory. |
-| `mapEach` | Apply an item transform to a list; nullish lists become `[]`. |
-| `Transform` | Type for a synchronous input-to-output transform. |
-| `Renamed` | Type-level representation of a renamed object shape. |
-| `BuiltInNormalizer` | Union of supported built-in normalizer specifications. |
-| `Normalizer` | Type for a custom field-normalizer callback. |
-| `NormalizerSpec` | Type accepted by a `normalize` field specification. |
+| Export              | Purpose                                                       |
+| ------------------- | ------------------------------------------------------------- |
+| `pipe`              | Compose synchronous transforms from left to right.            |
+| `rename`            | Rename selected own enumerable keys.                          |
+| `defaults`          | Fill fields whose values are `null` or `undefined`.           |
+| `normalize`         | Apply built-in or custom field normalizers.                   |
+| `merge`             | Shallow-merge an object or zero-argument source factory.      |
+| `mapEach`           | Apply an item transform to a list; nullish lists become `[]`. |
+| `Transform`         | Type for a synchronous input-to-output transform.             |
+| `Renamed`           | Type-level representation of a renamed object shape.          |
+| `BuiltInNormalizer` | Union of supported built-in normalizer specifications.        |
+| `Normalizer`        | Type for a custom field-normalizer callback.                  |
+| `NormalizerSpec`    | Type accepted by a `normalize` field specification.           |
 
 See the handwritten [API reference](apps/docs/docs/api/pipe.md) for detailed behavior and examples.
 
@@ -133,10 +133,10 @@ See the handwritten [API reference](apps/docs/docs/api/pipe.md) for detailed beh
 
 ```ts
 normalize({
-  createdAt: 'isoDate',
-  quantity: 'number',
-  enabled: 'boolean',
-  total: 'currency:USD',
+  createdAt: "isoDate",
+  quantity: "number",
+  enabled: "boolean",
+  total: "currency:USD",
 });
 ```
 

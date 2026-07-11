@@ -1,35 +1,24 @@
 {
-  "name": "my-transform-lib",
-  "version": "1.0.0",
-  "description": "Composable, type-safe API-to-UI data transforms",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    }
-  },
-  "files": ["dist"],
-  "sideEffects": false,
+  "name": "shapewire-monorepo",
+  "private": true,
   "scripts": {
-    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
-    "prebuild": "pnpm clean",
-    "build": "tsc -p tsconfig.build.json",
-    "test": "vitest src",
-    "test:run": "vitest run src",
-    "typecheck": "tsc -p tsconfig.json",
-    "check": "pnpm typecheck && pnpm test:run && pnpm build",
-    "prepack": "pnpm build"
+    "build": "pnpm --filter shapewire build && pnpm --filter @shapewire/docs build",
+    "check": "pnpm --filter shapewire check && pnpm --filter @shapewire/docs typecheck && pnpm --filter @shapewire/docs build",
+    "test": "pnpm --filter shapewire test",
+    "test:run": "pnpm --filter shapewire test:run",
+    "typecheck": "pnpm --filter shapewire typecheck && pnpm --filter @shapewire/docs typecheck",
+    "docs:start": "pnpm --filter @shapewire/docs start",
+    "docs:build": "pnpm --filter @shapewire/docs build",
+    "docs:clear": "pnpm --filter @shapewire/docs clear",
+    "docs:serve": "pnpm --filter @shapewire/docs serve",
+    "pack:lib": "pnpm --dir packages/shapewire pack"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "module",
-  "packageManager": "pnpm@10.33.0",
-  "devDependencies": {
-    "typescript": "^6.0.3",
-    "vitest": "^4.1.8"
-  }
+  "engines": {
+    "node": ">=20.0"
+  },
+  "browserslist": {
+    "production": [">0.5%", "not dead", "not op_mini all"],
+    "development": ["last 3 chrome version", "last 3 firefox version", "last 5 safari version"]
+  },
+  "packageManager": "pnpm@10.33.0"
 }

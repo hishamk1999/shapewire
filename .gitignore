@@ -5,6 +5,10 @@ node_modules/
 dist/
 *.tsbuildinfo
 
+# Docusaurus output
+apps/docs/.docusaurus/
+apps/docs/build/
+
 # Test output
 coverage/
 

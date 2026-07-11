@@ -1,7 +1,7 @@
 {
   "name": "shapewire",
-  "version": "1.0.0",
-  "description": "Composable, type-safe API-to-UI data transforms",
+  "version": "0.1.0-alpha.1",
+  "description": "Type-safe pipelines for turning API responses into clean, UI-ready data.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -11,7 +11,9 @@
       "default": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "scripts": {
     "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
@@ -23,10 +25,30 @@
     "check": "pnpm typecheck && pnpm test:run && pnpm build",
     "prepack": "pnpm build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "typescript",
+    "data-transformation",
+    "data-normalization",
+    "api",
+    "pipeline",
+    "type-safe",
+    "frontend",
+    "object-mapping",
+    "immutable",
+    "esm"
+  ],
+  "author": "Hisham Khaled",
+  "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hishamk1999/shapewire.git",
+    "directory": "packages/shapewire"
+  },
+  "bugs": {
+    "url": "https://github.com/hishamk1999/shapewire/issues"
+  },
+  "homepage": "https://github.com/hishamk1999/shapewire#readme",
   "engines": {
     "node": ">=20.0"
   },

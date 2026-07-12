@@ -1,5 +1,5 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
-import { defaults, mapEach, merge, normalize, pipe, rename } from "./index.js";
+import { defaults, mapEach, merge, normalize, pipe, rename } from "../index.js";
 
 describe("transform pipeline", () => {
   it("infers output fields across transforms", () => {

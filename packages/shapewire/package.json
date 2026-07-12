@@ -1,6 +1,6 @@
 {
   "name": "shapewire",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "Type-safe pipelines for turning API responses into clean, UI-ready data.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

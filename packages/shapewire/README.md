@@ -193,6 +193,19 @@ pnpm docs:serve   # Serve the built documentation locally
 pnpm pack:lib     # Create a local package archive
 ```
 
+The library source is organized by responsibility:
+
+```text
+src/
+├── core/           # Dependency-free transform contracts and pipeline composition
+├── normalization/  # Normalizer contracts, built-ins, and field orchestration
+├── transforms/     # Focused object and collection transforms
+├── __tests__/      # Public-API behavior and type-inference tests
+└── index.ts        # Stable public package boundary
+```
+
+Keep shared contracts in `core`, implementation details inside their feature directory, and consumer-facing exports in `index.ts`. Tests import from `index.ts` so internal restructuring cannot accidentally change the public API.
+
 The publishable source is in [`packages/shapewire`](packages/shapewire), and the documentation source is in [`apps/docs/docs`](apps/docs/docs).
 
 ## Project status

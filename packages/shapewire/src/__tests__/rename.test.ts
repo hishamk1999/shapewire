@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { rename } from "./rename.js";
+import { rename } from "../index.js";
 
 describe("rename", () => {
   it("renames keys based on the map", () => {

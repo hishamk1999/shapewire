@@ -1,5 +1,5 @@
 ---
-sidebar_position: 7
+sidebar_position: 9
 title: Exported types
 ---
 
@@ -25,6 +25,15 @@ Maps an input object type through a rename map.
 type ApiUser = {user_id: number; full_name: string};
 type User = Renamed<ApiUser, {user_id: 'id'; full_name: 'name'}>;
 // {id: number; name: string}
+```
+
+## `Picked` and `Omitted`
+
+These distributive types represent the object shapes returned by `pick` and `omit`. They preserve property modifiers and distribute across union inputs.
+
+```ts
+type PublicUser = Picked<ApiUser, 'user_id'>;
+type WithoutName = Omitted<ApiUser, 'full_name'>;
 ```
 
 ## Normalizer types

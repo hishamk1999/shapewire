@@ -10,9 +10,10 @@
 API responses rarely match the shape a frontend actually needs. Keys use the wrong naming convention, primitives arrive as inconsistent strings, optional values are missing, and related data comes from separate endpoints. ShapeWire turns that repeated boundary code into small, declarative transforms that compose from left to right.
 
 ```ts
-import { defaults, normalize, pipe, rename } from "shapewire";
+import { defaults, normalize, omit, pipe, rename } from "shapewire";
 
 const toUser = pipe(
+  omit(["password_hash", "internal_notes"]),
   rename({ user_id: "id", full_name: "name", created_at: "createdAt" }),
   defaults({ role: "viewer", verified: false }),
   normalize({ createdAt: "isoDate", balance: "number", verified: "boolean" }),
@@ -27,6 +28,7 @@ ShapeWire is framework-agnostic, immutable at the top level, side-effect free, a
 ## Why ShapeWire?
 
 - Rename API fields declaratively without mutating the source.
+- Keep only the fields a consumer needs, or omit private and internal fields.
 - Fill only `null` and `undefined` values while preserving `false`, `0`, and `''`.
 - Normalize dates, numbers, booleans, currencies, and custom formats.
 - Merge UI metadata or a second data source with predictable precedence.
@@ -75,9 +77,10 @@ const apiUser = {
 Define a reusable boundary transform:
 
 ```ts
-import { defaults, normalize, pipe, rename } from "shapewire";
+import { defaults, normalize, omit, pipe, rename } from "shapewire";
 
 const toUser = pipe(
+  omit(["password_hash", "internal_notes"]),
   rename({
     user_id: "id",
     full_name: "name",
@@ -117,17 +120,30 @@ Read the [documentation overview](apps/docs/docs/intro.md), [quick-start guide](
 | ------------------- | ------------------------------------------------------------- |
 | `pipe`              | Compose synchronous transforms from left to right.            |
 | `rename`            | Rename selected own enumerable keys.                          |
+| `pick`              | Keep only selected own enumerable fields.                     |
+| `omit`              | Remove selected own enumerable fields.                        |
 | `defaults`          | Fill fields whose values are `null` or `undefined`.           |
 | `normalize`         | Apply built-in or custom field normalizers.                   |
 | `merge`             | Shallow-merge an object or zero-argument source factory.      |
 | `mapEach`           | Apply an item transform to a list; nullish lists become `[]`. |
 | `Transform`         | Type for a synchronous input-to-output transform.             |
 | `Renamed`           | Type-level representation of a renamed object shape.          |
+| `Picked`            | Type-level representation of a selected object shape.         |
+| `Omitted`           | Type-level representation of an object with removed fields.   |
 | `BuiltInNormalizer` | Union of supported built-in normalizer specifications.        |
 | `Normalizer`        | Type for a custom field-normalizer callback.                  |
 | `NormalizerSpec`    | Type accepted by a `normalize` field specification.           |
 
 See the handwritten [API reference](apps/docs/docs/api/pipe.md) for detailed behavior and examples.
+
+For example, a public model can remove sensitive transport fields before renaming:
+
+```ts
+const toPublicUser = pipe(
+  omit(["password_hash", "internal_notes"]),
+  rename({ user_id: "id", full_name: "name" }),
+);
+```
 
 ## Built-in normalization
 

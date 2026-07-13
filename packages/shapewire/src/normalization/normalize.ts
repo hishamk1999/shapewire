@@ -1,4 +1,4 @@
-import type { AnyRecord, Simplify } from "../core/types.js";
+import type { AnyRecord, Simplify, TransformType, TypedTransform } from "../core/types.js";
 import { resolveBuiltInNormalizer } from "./built-ins.js";
 import type { Normalizer, NormalizerSpec } from "./types.js";
 
@@ -13,9 +13,21 @@ type Normalized<Input extends AnyRecord, Specs extends Readonly<Record<PropertyK
   Omit<Input, keyof Specs> & { [Key in keyof Specs]: NormalizedValue<Specs[Key]> }
 >;
 
+type NormalizeResult<Input, Specs extends Readonly<Record<PropertyKey, NormalizerSpec>>> = Input extends AnyRecord
+  ? Normalized<Input, Specs>
+  : Input;
+
+interface NormalizeType<Specs extends Readonly<Record<PropertyKey, NormalizerSpec>>> extends TransformType {
+  readonly type: NormalizeResult<this["Input"], Specs>;
+}
+
+type NormalizeTransform<Specs extends Readonly<Record<PropertyKey, NormalizerSpec>>> = TypedTransform<NormalizeType<Specs>> & {
+  <Input extends AnyRecord>(obj: Input): Normalized<Input, Specs>;
+};
+
 /** Applies built-in or custom normalizers to selected object fields. */
-export function normalize<const Specs extends Readonly<Record<PropertyKey, NormalizerSpec>>>(specs: Specs) {
-  return <Input extends AnyRecord>(obj: Input): Normalized<Input, Specs> => {
+export function normalize<const Specs extends Readonly<Record<PropertyKey, NormalizerSpec>>>(specs: Specs): NormalizeTransform<Specs> {
+  return (<Input extends AnyRecord>(obj: Input): Normalized<Input, Specs> => {
     const result: Record<PropertyKey, unknown> = { ...obj };
 
     for (const key of Reflect.ownKeys(specs)) {
@@ -26,5 +38,5 @@ export function normalize<const Specs extends Readonly<Record<PropertyKey, Norma
     }
 
     return result as Normalized<Input, Specs>;
-  };
+  }) as NormalizeTransform<Specs>;
 }

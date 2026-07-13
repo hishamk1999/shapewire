@@ -10,7 +10,7 @@
 API responses rarely match the shape a frontend actually needs. Keys use the wrong naming convention, primitives arrive as inconsistent strings, optional values are missing, and related data comes from separate endpoints. ShapeWire turns that repeated boundary code into small, declarative transforms that compose from left to right.
 
 ```ts
-import { defaults, normalize, omit, pipe, rename } from "shapewire";
+import { at, defaults, normalize, omit, pipe, rename } from "shapewire";
 
 const toUser = pipe(
   omit(["password_hash", "internal_notes"]),
@@ -33,6 +33,7 @@ ShapeWire is framework-agnostic, immutable at the top level, side-effect free, a
 - Normalize dates, numbers, booleans, currencies, and custom formats.
 - Merge UI metadata or a second data source with predictable precedence.
 - Apply the same transform safely to arrays and nullish lists.
+- Target a nested object explicitly without making other transforms recursively deep.
 - Infer renamed keys and normalized output types in TypeScript.
 - Use the resulting plain function anywhere JavaScript runs.
 
@@ -119,6 +120,7 @@ Read the [documentation overview](apps/docs/docs/intro.md), [quick-start guide](
 | Export              | Purpose                                                       |
 | ------------------- | ------------------------------------------------------------- |
 | `pipe`              | Compose synchronous transforms from left to right.            |
+| `at`                | Transform the object at a dot-separated property path.        |
 | `rename`            | Rename selected own enumerable keys.                          |
 | `pick`              | Keep only selected own enumerable fields.                     |
 | `omit`              | Remove selected own enumerable fields.                        |
@@ -144,6 +146,37 @@ const toPublicUser = pipe(
   rename({ user_id: "id", full_name: "name" }),
 );
 ```
+
+## Nested objects with `at`
+
+Use `at(path, transform)` when one nested object needs its own shallow transformation. The path uses dot notation, and the nested transform can be any ShapeWire transform or `pipe(...)`.
+
+```ts
+import {at, merge, normalize, pipe, rename} from 'shapewire';
+
+const toUser = pipe(
+  at(
+    'user.profile',
+    pipe(
+      rename({full_name: 'name', created_at: 'createdAt'}),
+      normalize({createdAt: 'isoDate'}),
+      merge({source: 'api' as const}),
+    ),
+  ),
+);
+
+const result = toUser({
+  user_id: 1,
+  user: {
+    profile: {full_name: 'Hisham', created_at: '2026-07-13'},
+    permissions: {canEdit: true},
+  },
+});
+```
+
+Only `user.profile` is transformed. The root object and `user` are cloned, while `user.permissions` keeps the same reference. If the path is missing or its target is not an object, `at` returns the original root object unchanged.
+
+See the [`at` API reference](apps/docs/docs/api/at.md) for direct paths, nested paths, composition, structural sharing, and current path-syntax limitations.
 
 ## Built-in normalization
 
@@ -173,7 +206,8 @@ ShapeWire does not depend on a UI framework, state manager, fetch client, or val
 
 ## Current limitations
 
-- Object transforms are shallow; nested values are not recursively transformed.
+- Object transforms remain shallow; use `at` to target one nested object explicitly rather than recursively transforming a whole value.
+- `at` currently supports non-empty dot-separated string keys such as `profile` and `user.profile`; bracket notation, escaped dots, wildcards, and symbol path segments are not supported.
 - All operations are synchronous.
 - Public `pipe` overloads infer one through four stages. The runtime reducer accepts more, but those calls do not have a public typed overload.
 - `merge` is shallow and right-hand fields take precedence.

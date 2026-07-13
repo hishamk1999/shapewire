@@ -1,4 +1,4 @@
-import type { AnyRecord, Transform } from "../core/types.js";
+import type { AnyRecord, Transform, TransformType, TypedTransform } from "../core/types.js";
 
 type KeysOfUnion<Input> = Input extends unknown ? keyof Input : never;
 
@@ -13,12 +13,22 @@ type InferredOmitted<Input extends AnyRecord, Keys extends PropertyKey> = Proper
     ? Omit<Input, Extract<Keys, keyof Input>>
     : never;
 
+type OmitResult<Input, Keys extends PropertyKey> = Input extends AnyRecord ? InferredOmitted<Input, Keys> : Input;
+
+interface OmitType<Keys extends PropertyKey> extends TransformType {
+  readonly type: OmitResult<this["Input"], Keys>;
+}
+
+type OmitTransform<Keys extends PropertyKey> = TypedTransform<OmitType<Keys>> & {
+  <Input extends AnyRecord>(obj: Input): InferredOmitted<Input, Keys>;
+};
+
 function toRuntimeKey(key: PropertyKey): string | symbol {
   return typeof key === "number" ? String(key) : key;
 }
 
 function createOmit<const Keys extends readonly PropertyKey[]>(keys: Keys) {
-  return <Input extends AnyRecord>(obj: Input): InferredOmitted<Input, Keys[number]> => {
+  return (<Input extends AnyRecord>(obj: Input): InferredOmitted<Input, Keys[number]> => {
     const omitted = new Set(keys.map(toRuntimeKey));
     const result: Record<PropertyKey, unknown> = {};
 
@@ -33,7 +43,7 @@ function createOmit<const Keys extends readonly PropertyKey[]>(keys: Keys) {
     }
 
     return result as InferredOmitted<Input, Keys[number]>;
-  };
+  }) as OmitTransform<Keys[number]>;
 }
 
 /**

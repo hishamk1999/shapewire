@@ -1,4 +1,4 @@
-import type { AnyRecord, Transform } from "../core/types.js";
+import type { AnyRecord, Transform, TransformType, TypedTransform } from "../core/types.js";
 
 type KeysOfUnion<Input> = Input extends unknown ? keyof Input : never;
 
@@ -13,12 +13,22 @@ type InferredPicked<Input extends AnyRecord, Keys extends PropertyKey> = Propert
     ? Pick<Input, Extract<Keys, keyof Input>>
     : never;
 
+type PickResult<Input, Keys extends PropertyKey> = Input extends AnyRecord ? InferredPicked<Input, Keys> : Input;
+
+interface PickType<Keys extends PropertyKey> extends TransformType {
+  readonly type: PickResult<this["Input"], Keys>;
+}
+
+type PickTransform<Keys extends PropertyKey> = TypedTransform<PickType<Keys>> & {
+  <Input extends AnyRecord>(obj: Input): InferredPicked<Input, Keys>;
+};
+
 function toRuntimeKey(key: PropertyKey): string | symbol {
   return typeof key === "number" ? String(key) : key;
 }
 
 function createPick<const Keys extends readonly PropertyKey[]>(keys: Keys) {
-  return <Input extends AnyRecord>(obj: Input): InferredPicked<Input, Keys[number]> => {
+  return (<Input extends AnyRecord>(obj: Input): InferredPicked<Input, Keys[number]> => {
     const enumerableKeys = new Set(
       Reflect.ownKeys(obj).filter((key) => Object.prototype.propertyIsEnumerable.call(obj, key)),
     );
@@ -36,7 +46,7 @@ function createPick<const Keys extends readonly PropertyKey[]>(keys: Keys) {
     }
 
     return result as InferredPicked<Input, Keys[number]>;
-  };
+  }) as PickTransform<Keys[number]>;
 }
 
 /**

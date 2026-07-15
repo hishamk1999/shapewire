@@ -264,4 +264,4 @@ ShapeWire is under active development and has not reached its first public npm r
 
 ## License
 
-ShapeWire is available under the [ISC License](LICENSE).
+ShapeWire is available under the [MIT License](LICENSE).
